@@ -12,7 +12,13 @@ const todo = (state = {}, action) => {
           completed: !state.completed
         };
       }
-
+    case 'UPDATE_TODO':
+      if(state.id === action.payload.id){
+        return {
+          ...state,
+          text: action.payload.text
+        };
+      }
     default:
       return state;
   }
@@ -21,15 +27,19 @@ const todo = (state = {}, action) => {
 const todos = (state = [], action) => {
   switch (action.type){
     case 'ADD_TODO':
-      return [
-        ...state,
-        todo(undefined, action)
-      ];
-
+      if ( action.payload.text !== ""){
+        return [
+          todo(undefined, action),
+          ...state
+        ];
+      }
+      return state;
     case 'TOGGLE_TODO':
       return state.map(t => todo(t, action));
     case 'REMOVE_TODO':
-      return state.filter( t => t.id != action.payload.id)
+      return state.filter( t => t.id != action.payload.id);
+    case 'UPDATE_TODO':
+      return state.map( t => todo(t,action));
     default:
       return state;
   }

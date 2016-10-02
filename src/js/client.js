@@ -3,20 +3,45 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
-// import '../styles/index.scss';
+import v4 from 'uuid-v4';
+import '../styles/index.scss';
 
 import { todos } from './reducers/todos';
 import { elements } from './reducers/elements';
 import { visibilityFilterElements } from './reducers/visibility';
+import { configurations } from './reducers/configuration';
+
+
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 const { Component } = React;
 
 const todoApp = combineReducers({
   elements,
-  visibilityFilterElements
+  visibilityFilterElements,
+  configurations
 });
 
-const store = createStore(todoApp);
+const loadState = () => {
+  try{
+    let result = JSON.parse(localStorage.getItem('state'));
+    return result ? result : undefined;
+  }
+  catch(err){
+    return undefined;
+  }
+}
+
+const saveState = (state) => {
+  try{
+    localStorage.setItem('state',JSON.stringify(state));
+  }
+  catch(err){
+
+  }
+}
+
+const store = createStore(todoApp, loadState());
 
 const FilterLink = ({ visibilityFilter, currentVisibilityFilter, onFilterClicked, children }) => {
 
@@ -50,43 +75,62 @@ const getVisibleTodos = (todos, visibilityFilter) => {
   }
 }
 
-const Todo = ({ text, completed, onTodoClicked, onRemoveTodo }) => (
-  <div>
-    <li
-      style={{
-        textDecoration: completed ? 'line-through' : 'none'
-      }}
-      onClick={ onTodoClicked }>
-      { text }
-    </li>
+const Todo = ({ todo, onTodoClicked, onRemoveTodo, onUpdateTodo}) => {
+  let input;
+  return (
+    <div
+      class="todo"
+    >
+      <input
+        type='checkbox'
+        checked={ todo.completed }
+        onClick={ onTodoClicked }
+      />
+      <input
+        type="text"
+        class='todo'
+        style={{
+        textDecoration: todo.completed ? 'line-through' : 'none'
+        }}
+        defaultValue={ todo.text }
+        ref={ node => input = node }
+        onChange={ () => onUpdateTodo(todo, input.value) }
+      />
+      
       <button
           onClick={ onRemoveTodo }
-        >Eliminar</button>
-  </div>
-);
+      >X</button>
+    </div>
+  );
+}
 
-const TodoList = ({ todos, onTodoClicked, onRemoveTodo }) => (
-  <ul>
+const TodoList = ({ todos, onTodoClicked, onRemoveTodo, onUpdateTodo }) => (
+  <div>
     {
-      todos.map(todo => (
+      todos.map(todo => {
+        return(
         <Todo
           key={ todo.id }
-          { ...todo }
+          todo={ todo }
           onTodoClicked={ () => onTodoClicked(todo) }
           onRemoveTodo={ () => onRemoveTodo(todo) }
+          onUpdateTodo={ onUpdateTodo }
         />
+        );
         
-      ))
+    })
     }
-  </ul>
+  </div>
 );
 
 const AddTodo = ({ onAddTodo, children }) => {
   let input;
 
   return (
-    <div>
-      <input type="text" ref={ node => input = node } />
+    <div
+      class="add-todo"
+    >
+      <input type="text" ref={ node => input = node } placeholder="Nuevo Todo" />
       <button
         onClick={
           () => { 
@@ -95,6 +139,22 @@ const AddTodo = ({ onAddTodo, children }) => {
           }
         }
       >{ children }</button>
+    </div>
+  );
+}
+
+const Header = ({element, onUpdateTitle}) => {
+  let input;
+  return (
+    <div>
+      <input
+        class="header"
+        placeholder='Título'
+        defaultValue={ element.title }
+        ref={ node => input = node }
+        onChange={ () => onUpdateTitle(element.id, input.value) }
+      />
+
     </div>
   );
 }
@@ -119,16 +179,16 @@ const Footer = ({ currentVisibilityFilter, onFilterClicked }) => (
   </div>
 );
 
-//let maxId = 0;
-const TodosApp = ({ todos, visibilityFilter, maxId, elementId }) => (
+const TodosApp = ({ todos, visibilityFilter, elementId }) => (
   <div>
     <AddTodo
+      class="element"
       onAddTodo={
         (text) => {
           store.dispatch({
             type: 'ADD_TODO',
             payload: {
-              id: maxId,
+              id: v4(),
               text,
               elementId
             }
@@ -160,6 +220,18 @@ const TodosApp = ({ todos, visibilityFilter, maxId, elementId }) => (
           });
         }
       }
+      onUpdateTodo={
+        (todo, text) => {
+          store.dispatch({
+            type: 'UPDATE_TODO',
+            payload: {
+              id: todo.id,
+              elementId,
+              text
+            }
+          })
+        }
+      }
        />
   
     <Footer
@@ -181,7 +253,9 @@ const TodosApp = ({ todos, visibilityFilter, maxId, elementId }) => (
 //-------------------------------------------
 
 const GeneralFooter = ({ currentVisibilityFilter, onFilterClicked }) => (
-  <div>
+  <div
+    class="general-footer"
+  >
     Show:
     <FilterLink
       visibilityFilter="SHOW_ALL_ELEMENTS"
@@ -204,9 +278,16 @@ const AddElement = ({ onAddTodoList, onAddNote }) => {
   let input;
 
   return (
-    <div>
-      <input type="text" ref={ node => input = node } />
+    <div
+      class="add-element"
+    >
+      <input 
+        type="text" 
+        placeholder={ 'Nueva Nota' }
+        ref={ node => input = node } 
+      />
       <button
+        class="add-element b1"
         onClick={
           () => { 
             onAddNote(input.value);
@@ -215,6 +296,7 @@ const AddElement = ({ onAddTodoList, onAddNote }) => {
         }
       >Nueva Nota</button>
       <button
+        class="add-element b2"
         onClick={
           () => { 
             onAddTodoList();
@@ -225,82 +307,288 @@ const AddElement = ({ onAddTodoList, onAddNote }) => {
   );
 }
 
-
-const getVisibleElements = (elements, visibilityFilter) => {
-  if(visibilityFilter === 'SHOW_ALL_ELEMENTS'){
-    return elements;
-  }
-
-  if(visibilityFilter === 'SHOW_NOTES'){
-    return elements.filter(t => t.isNote);
-  }
-
-  if(visibilityFilter === 'SHOW_TODOS'){
-    return elements.filter(t => !t.isNote);
-  }
+const getSearchedElements = (elements, configurations) => {
+  if ( typeof configurations.search !== "undefined" )
+    if ( configurations.search !== "" )
+      return elements.filter(
+        element => {
+          if (typeof element.title !== "undefined")
+              if (element.title.toUpperCase().includes(configurations.search))
+                return true;
+          if (element.isNote){
+            if (typeof element.text !== "undefined")
+              if (element.text.toUpperCase().includes(configurations.search))
+                return true;
+          }
+          if (!element.isNote){
+            let val = false;
+            for(var i = 0; i < element.todolist.length; i++) {
+              if (element.todolist[i].text.toUpperCase().includes(configurations.search)) {
+                  val = true;
+              }
+            }
+            
+            return val;
+          }
+        }
+      );
+  return elements;
 }
 
-const ElementList = ({ elements }) => (
-  <ul>
+const getVisibleElements = (elements, visibilityFilter, configurations) => {
+  elements = getSearchedElements(elements, configurations);
+  if(visibilityFilter === 'SHOW_ALL_ELEMENTS')
+    return elements.filter(t => !t.archived);
+
+  if(visibilityFilter === 'SHOW_NOTES')
+    return elements.filter(t => t.isNote).filter(t => !t.archived);
+  
+
+  if(visibilityFilter === 'SHOW_TODOS')
+    return elements.filter(t => !t.isNote).filter(t => !t.archived);
+}
+
+const ElementList = ({ elements, colors }) => (
+  <div>
     {
       elements.map(element => (
         <Element
           key={ element.id }
           element={ element }
+          colors={ colors }
         />
         
       ))
     }
-  </ul>
+  </div>
 );
 
-const Element = ({ element }) => {
+const Element = ({ element, colors}) => {
   switch(element.isNote) {
     case true:
-      return {}
+      return (
+        <div
+          style={{
+          background: element.color
+          }}
+          class="element"
+        >
+          <Header
+            element={ element }
+            onUpdateTitle={
+              (elementId, text) => {
+                store.dispatch({
+                  type: 'UPDATE_TITLE',
+                  payload: {
+                    elementId,
+                    text
+                  }
+                });
+              }
+            } 
+          />
+          <Note
+            note={ element }
+            onUpdateNote={
+              (elementId, text) => {
+                store.dispatch({
+                  type: 'UPDATE_NOTE',
+                  payload: {
+                    elementId,
+                    text
+                  }
+                });
+              }
+            }
+          />
+          <button
+            onClick={ 
+              () => {
+                store.dispatch({
+                  type: 'ARCHIVE_ELEMENT',
+                  payload: {
+                    elementId: element.id
+                  }
+                });
+              } 
+            }
+          >Archivar</button>
+          <div>
+            {colors.map(color => (
+              <button
+                key={ colors.indexOf(color) }
+                style={{ background: color }}
+                onClick={
+                  () => {
+                    store.dispatch({
+                      type: 'CHANGE_COLOR',
+                      payload: {
+                        elementId: element.id,
+                        color
+                      }
+                    })
+                  }
+                }
+                >O</button>
+              ))
+            }
+          </div>
+
+        </div>
+      );
     default:
       return (
-        <TodosApp
-          todos={ element.todolist }
-          visibilityFilter={ element.visibilityFilter }
-          maxId={ element.maxId }
-          elementId={ element.id }
+        <div
+          style={{
+          background: element.color
+          }}
+          class="element"
+        >
+          <Header
+            element={ element }
+            onUpdateTitle={
+              (elementId, text) => {
+                store.dispatch({
+                  type: 'UPDATE_TITLE',
+                  payload: {
+                    elementId,
+                    text
+                  }
+                });
+              }
+            } 
           />
+          <TodosApp
+            todos={ element.todolist }
+            visibilityFilter={ element.visibilityFilter }
+            elementId={ element.id }
+            />
+          <button
+            onClick={ 
+              () => {
+                store.dispatch({
+                  type: 'ARCHIVE_ELEMENT',
+                  payload: {
+                    elementId: element.id
+                  }
+                });
+              } 
+            }
+          >Archivar</button>
+          <div>
+            {colors.map(color => (
+              <button
+                key={ colors.indexOf(color) }
+                style={{ background: color }}
+                onClick={
+                  () => {
+                    store.dispatch({
+                      type: 'CHANGE_COLOR',
+                      payload: {
+                        elementId: element.id,
+                        color
+                      }
+                    })
+                  }
+                }
+                >O</button>
+
+              ))
+            }
+          </div>
+        </div>
         );
   }
 }
 
-let maxIdGeneral = 0;
-const ElementsApp = ({ elements, visibilityFilterElements }) => (
+const Note = ({ note, onUpdateNote }) => {
+  let input;
+  return (
+    <input
+      class="note"
+      defaultValue={ note.text }
+      ref={ node => input = node }
+      onChange={ () => onUpdateNote(note.id, input.value) }
+    />
+  );
+}
+
+const SearchElement = ({onSearchElement, configurations}) => {
+  let input;
+  return (
+    <div
+      class="search-bar"
+    >
+      <input
+        placeholder={ 'Búsqueda' }
+        defaultValue= { configurations.search }
+        ref={ node => input = node }
+        onChange={ () => onSearchElement(input.value) }
+      />
+      <button
+        onClick={
+          () => { 
+            input.value = "";
+            onSearchElement(input.value);
+          }
+        }
+      >X</button>
+    </div>
+
+  );
+
+}
+
+const ElementsApp = ({ elements, visibilityFilterElements, configurations }) => (
   <div>
-    <AddElement
-      onAddNote={
+    <SearchElement
+      configurations={ configurations }
+      onSearchElement={
         (text) => {
           store.dispatch({
-            type: 'ADD_NOTE',
+            type: 'SEARCH_ELEMENT',
             payload: {
-              id: maxIdGeneral++,
               text
             }
-          });
+          })
         }
       }
-      onAddTodoList={
-        () => {
-          store.dispatch({
-            type: 'ADD_TODO_LIST',
-            payload: {
-              id: maxIdGeneral++       
-            }
-          });
+    />
+    <div
+      class="container"
+    >
+      <AddElement
+        onAddNote={
+          (text) => {
+            store.dispatch({
+              type: 'ADD_NOTE',
+              payload: {
+                id: v4(),
+                text,
+                color: configurations.colors[0]
+              }
+            });
+          }
         }
-      }
-      />
-      
+        onAddTodoList={
+          () => {
+            store.dispatch({
+              type: 'ADD_TODO_LIST',
+              payload: {
+                id: v4(),
+                color: configurations.colors[0]       
+              }
+            });
+          }
+        }
+        />
+        
 
-      <ElementList
-      elements={ getVisibleElements(elements, visibilityFilterElements) }
-      />
+        <ElementList
+        elements={ getVisibleElements(elements, visibilityFilterElements, configurations) }
+        colors={ configurations.colors }
+        />
+      </div>
       <GeneralFooter
       currentVisibilityFilter={ visibilityFilterElements }
       onFilterClicked={
@@ -318,7 +606,6 @@ const ElementsApp = ({ elements, visibilityFilterElements }) => (
 
 
 const render = () => {
-  
   ReactDOM.render(
     <ElementsApp
       { ...store.getState() } />,
@@ -328,3 +615,6 @@ const render = () => {
 
 render();
 store.subscribe(render);
+store.subscribe( () => {
+  saveState(store.getState());
+});

@@ -1,4 +1,177 @@
-$color: red;
+$color: #ECEFF1;
+$search-bar-height: 45px;
+$footer-height: 45px;
+
+.header{
+  font-family: 'Roboto Condensed','Droid Sans',arial,sans-serif;
+  font-size: 17px;
+  font-weight: bold;
+  line-height: 23px;
+  min-height: 38px;
+  width: 100%;
+}
+
+.todo{
+  box-sizing: border-box;
+  font-family: 'Roboto Slab','Times New Roman',serif;
+  font-size: 17px;
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.container{
+  padding: 0;
+  margin-top: $search-bar-height + 15px;
+  margin-bottom: $footer-height + 15px;
+  position: relative;
+  width: 100%;
+}
+
+.todo{
+  position: relative;
+  padding: 0;
+  width: 100%;
+  height: 30px;
+  input[type="text"]{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Roboto Slab','Times New Roman',serif;
+    font-size: 15px;
+    padding-right: 25px;
+    padding-left: 30px;
+  }
+  input[type="checkbox"]{
+    position:absolute;
+    width: 30px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 1;
+  }
+  button{
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.add-todo{
+  position: relative;
+  padding: 0;
+  width: 100%;
+  height: 30px;
+  input{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Roboto Slab','Times New Roman',serif;
+    font-size: 15px;
+    padding-right: 100px;
+  }
+  button{
+    width: 100px;
+    height: 25px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.add-element{
+  background-color: #FF9800;
+  position: relative;
+  padding: 0;
+  width: 100%;
+  height: 50px;
+  input{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Roboto Slab','Times New Roman',serif;
+    font-size: 15px;
+    padding-right: 200px;
+    padding-left: 5px;
+  }
+  .b1{
+    width: 100px;
+    height: 100%;
+    position: absolute;
+    right: 100px;
+    //padding-right: 100px;
+    top: 0;
+  }
+  .b2{
+    width: 100px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+.note{
+  width: 100%;
+  height: 100%;
+}
+
+.search-bar{
+  padding: 0;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  position: fixed;
+  width: 100%;
+  height: $search-bar-height;
+  background-color: white;
+  input{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font: normal 16px Roboto,sans-serif; 
+    padding-right: 25px; 
+  }
+  button{
+    height: 25px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25px;
+  }
+}
+
+.general-footer{
+  padding: 0;
+  position: fixed;
+  width: 100%;
+  height: $footer-height;
+  bottom: 0;
+  left: 0;
+  background-color: white;
+}
+
+.element{
+  position: relative;
+  box-shadow: 3px 3px 3px #888888;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  
+}
+.element > button{
+    position: absolute;;
+    bottom: 0;
+    right: 0;
+  }
+
+input{
+  background: transparent;
+  border: none;
+}
 
 body{
   background: $color;
