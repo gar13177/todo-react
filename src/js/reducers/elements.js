@@ -19,7 +19,60 @@ const element = (state = {}, action) => {
         create_date: new Date().toLocaleString(),
         archived: false
       };
-      
+    case 'ADD_TODO':
+      if(state.id === action.payload.elementId){
+        state.todolist= todos(state.todolist, action);
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'TOGGLE_TODO':
+      if(state.id === action.payload.elementId){
+        state.todolist= todos(state.todolist, action);
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'UPDATE_TITLE':
+      if(state.id === action.payload.elementId){
+        state.title= action.payload.text;
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'UPDATE_TODO':
+      if(state.id === action.payload.elementId){
+        state.todolist= todos(state.todolist, action);
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'CHANGE_COLOR':
+      if(state.id === action.payload.elementId){
+        state.color = action.payload.color;
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'UPDATE_NOTE':
+      if(state.id === action.payload.elementId){
+        state.text = action.payload.text;
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'ARCHIVE_ELEMENT':
+      if(state.id === action.payload.elementId){
+        state.archived = true;
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'REMOVE_TODO':
+      if(state.id === action.payload.elementId){
+        state.todolist= todos(state.todolist, action);
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
+    case 'SET_VISIBILITY_FILTER':
+      if(state.id === action.payload.elementId){
+        state.visibilityFilter= visibilityFilter(undefined, action);
+        state.update_date = new Date().toLocaleString();
+        return { ...state };
+      }
     default:
       return state;
   }
@@ -43,79 +96,23 @@ const elements = (state = [], action) => {
       return state;
 
     case 'ADD_TODO':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].todolist= todos(state[i].todolist, action);
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
-    
+      return state.map(e => element(e, action)); 
     case 'TOGGLE_TODO':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].todolist= todos(state[i].todolist, action);
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
-
+      return state.map(e => element(e, action));
     case 'UPDATE_TITLE':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].title= action.payload.text;
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
-
+      return state.map(e => element(e, action));
     case 'UPDATE_TODO':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].todolist= todos(state[i].todolist, action);
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
+      return state.map(e => element(e, action));
     case 'CHANGE_COLOR':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].color = action.payload.color
-        }
-      }
-      return [...state];
+      return state.map(e => element(e, action));
     case 'UPDATE_NOTE':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].text = action.payload.text;
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
+      return state.map(e => element(e, action));
     case 'ARCHIVE_ELEMENT':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].archived= true
-        }
-      }
-      return [...state];
-    
+      return state.map(e => element(e, action));    
     case 'REMOVE_TODO':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].todolist= todos(state[i].todolist, action);
-          state[i].update_date = new Date().toLocaleString();
-        }
-      }
-      return [...state];
-
+      return state.map(e => element(e, action));
     case 'SET_VISIBILITY_FILTER':
-      for(var i=0; i < state.length; i++){
-        if (state[i].id === action.payload.elementId){
-          state[i].visibilityFilter= visibilityFilter(undefined, action);
-        }
-      }
-      return [...state];
+      return state.map(e => element(e, action));
     default:
       return state;
   }

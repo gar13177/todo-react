@@ -1,7 +1,7 @@
 
 const configurations = (
   state = {
-    colors: ["#FFFFFF", "#90A4AE","#E91E63","#9C27B0","#673AB7","#F44336","#3F51B5","#2196F3"],
+    colors: ["#FFFFFF", "#E57373","#B39DDB","#9FA8DA","#90CAF9","#80CBC4","#A5D6A7","#FFD54F"],
     search: ""}, action) => {
   switch (action.type){
     case 'SEARCH_ELEMENT':
