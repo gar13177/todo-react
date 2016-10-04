@@ -1,7 +1,7 @@
-
-import { FilterLink } from './filterLink';
-
 import React from 'react';
+import ReactDOM from 'react-dom';
+import FilterLink from './filterLink';
+
 const { Component } = React;
 
 //--------------------------------------
@@ -74,7 +74,19 @@ const AddTodo = ({ onAddTodo, children }) => {
     <div
       class="add-todo"
     >
-      <input type="text" ref={ node => input = node } placeholder="Nuevo Todo" />
+      <input 
+        type="text" 
+        ref={ node => input = node } 
+        placeholder="Nuevo Todo"
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 13){
+              onAddTodo(input.value);
+              input.value = "";
+            }
+          }
+        }  
+      />
       <button
         onClick={
           () => { 
@@ -124,7 +136,7 @@ const TodosApp = ({ todos, visibilityFilter, elementId }) => (
             }
           });
         }
-      }>Agregar Todo</AddTodo>
+      }>+</AddTodo>
 
     <TodoList
       todos={ getVisibleTodos(todos, visibilityFilter) }

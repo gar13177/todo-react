@@ -1,10 +1,10 @@
-
-import { FilterLink } from './filterLink';
-import { TodosApp } from './todosApp';
-
 import React from 'react';
-const { Component } = React;
+import ReactDOM from 'react-dom';
+import FilterLink from './filterLink';
+import TodosApp from './todosApp';
 
+const { Component } = React;
+console.log(TodosApp);
 //-------------------------
 
 const Header = ({element, onUpdateTitle}) => {
@@ -56,6 +56,14 @@ const AddElement = ({ onAddTodoList, onAddNote }) => {
         type="text" 
         placeholder={ 'Nueva Nota' }
         ref={ node => input = node } 
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 13){
+              onAddNote(input.value);
+              input.value = "";
+            }
+          }
+        }
       />
       <button
         class="add-element b1"
@@ -247,6 +255,14 @@ const SearchElement = ({onSearchElement, configurations}) => {
         defaultValue= { configurations.search }
         ref={ node => input = node }
         onChange={ () => onSearchElement(input.value) }
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 27){
+              input.value = "";
+              onSearchElement(input.value);
+            }
+          }
+        } 
       />
       <button
         onClick={

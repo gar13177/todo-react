@@ -1,16 +1,19 @@
 import { createStore, combineReducers } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
+//import {Router, browserHistory} from 'react-router';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
 import v4 from 'uuid-v4';
 import '../styles/index.scss';
 
+//import routes from './routes';
+
 import { todos } from './reducers/todos';
 import { elements } from './reducers/elements';
 import { visibilityFilterElements } from './reducers/visibility';
 import { configurations } from './reducers/configuration';
-//import { ElementsApp } from './clients/elementsApp';
+//import ElementsApp from './components/elementsApp';
 
 //import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
@@ -48,6 +51,7 @@ const store = createStore(todoApp, loadState());
 -------------------
 -------------------
 */
+
 
 
 const Header = ({element, onUpdateTitle}) => {
@@ -99,6 +103,14 @@ const AddElement = ({ onAddTodoList, onAddNote }) => {
         type="text" 
         placeholder={ 'Nueva Nota' }
         ref={ node => input = node } 
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 13){
+              onAddNote(input.value);
+              input.value = "";
+            }
+          }
+        }
       />
       <button
         class="add-element b1"
@@ -290,6 +302,14 @@ const SearchElement = ({onSearchElement, configurations}) => {
         defaultValue= { configurations.search }
         ref={ node => input = node }
         onChange={ () => onSearchElement(input.value) }
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 27){
+              input.value = "";
+              onSearchElement(input.value);
+            }
+          }
+        } 
       />
       <button
         onClick={
@@ -456,7 +476,19 @@ const AddTodo = ({ onAddTodo, children }) => {
     <div
       class="add-todo"
     >
-      <input type="text" ref={ node => input = node } placeholder="Nuevo Todo" />
+      <input 
+        type="text" 
+        ref={ node => input = node } 
+        placeholder="Nuevo Todo"
+        onKeyDown={
+          (event) => {
+            if(event.keyCode === 13){
+              onAddTodo(input.value);
+              input.value = "";
+            }
+          }
+        } 
+      />
       <button
         onClick={
           () => { 
@@ -506,7 +538,7 @@ const TodosApp = ({ todos, visibilityFilter, elementId }) => (
             }
           });
         }
-      }>Agregar Todo</AddTodo>
+      }>+</AddTodo>
 
     <TodoList
       todos={ getVisibleTodos(todos, visibilityFilter) }
@@ -567,6 +599,16 @@ const TodosApp = ({ todos, visibilityFilter, elementId }) => (
 -----------------
 -----------------
 */
+/*
+const render = () => {
+  ReactDOM.render(
+     <Router 
+        routes={routes}
+        history={browserHistory} />,
+    document.querySelector('.init')
+  );
+};*/
+
 
 const render = () => {
   ReactDOM.render(
@@ -575,6 +617,7 @@ const render = () => {
     document.getElementById('root')
   );
 };
+
 
 render();
 store.subscribe(render);

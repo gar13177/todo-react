@@ -1,9 +1,10 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 const { Component } = React;
 
 //-----------------------
 
-const FilterLink = ({ visibilityFilter, currentVisibilityFilter, onFilterClicked, children }) => {
+export const FilterLink = ({ visibilityFilter, currentVisibilityFilter, onFilterClicked, children }) => {
 
   if(visibilityFilter === currentVisibilityFilter){
     return <strong>{ children }</strong>;

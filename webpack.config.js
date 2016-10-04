@@ -40,6 +40,8 @@ module.exports = {
       template: './index.html'
     })
   ] : [
+    new webpack.HotModuleReplaementPlugin(),
+    new webpack.NoErrorsPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
