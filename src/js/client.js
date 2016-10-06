@@ -2,7 +2,8 @@ import { createStore, combineReducers, applyMiddleware  } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { ActionCreators as UndoActionCreators } from 'redux-undo'
+import { ActionCreators as UndoActionCreators } from 'redux-undo';
+import keydown from 'react-keydown';
 //import {Router, browserHistory} from 'react-router';
 
 
@@ -386,7 +387,11 @@ const SearchElement = ({onSearchElement, configurations}) => {
 
 }
 
-const ElementsApp = ({ elements, visibilityFilterElements, configurations }) => (
+
+
+const ElementsApp = ({ elements, visibilityFilterElements, configurations }) => {
+  
+  return(
   <div>
     <SearchElement
       configurations={ configurations }
@@ -451,7 +456,8 @@ const ElementsApp = ({ elements, visibilityFilterElements, configurations }) => 
 
 
   </div>
-);
+  );
+}
 
 const FilterLink = ({ visibilityFilter, currentVisibilityFilter, onFilterClicked, children }) => {
 
@@ -663,6 +669,19 @@ const TodosApp = ({ todos, visibilityFilter, elementId }) => (
 -----------------
 */
 
+//Listen for CTRL+Z
+function KeyPress(e) {
+  const evtobj = window.event ? event : e
+  if (evtobj.keyCode == 90 && evtobj.ctrlKey) {
+    store.dispatch(UndoActionCreators.undo())
+  }
+
+  if (evtobj.keyCode == 89 && evtobj.ctrlKey) {
+    store.dispatch(UndoActionCreators.redo())
+  }
+}
+//bind the listener
+window.onkeydown = KeyPress;
 
 
 
