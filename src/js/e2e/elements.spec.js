@@ -1,4 +1,4 @@
-import { elements } from '../reducers/elements';
+import { elementsReducer } from '../reducers/elements';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
 
@@ -27,7 +27,7 @@ const testAddTodoList = () => {
 
   deepFreeze(stateBefore);
   deepFreeze(action);
-  let element = elements(stateBefore, action);
+  let element = elementsReducer(stateBefore, action);
   element[0].create_date = '0';
   expect(
     element
@@ -57,7 +57,7 @@ const testAddNote = () => {
 
   deepFreeze(stateBefore);
   deepFreeze(action);
-  let element = elements(stateBefore, action);
+  let element = elementsReducer(stateBefore, action);
   element[0].create_date = '0';
   expect(
     element
@@ -108,7 +108,7 @@ const testAddTodo = () => {
 
   deepFreeze(stateBefore);
   deepFreeze(action);
-  let element = elements(stateBefore, action);
+  let element = elementsReducer(stateBefore, action);
   element[0].update_date = '0';
   expect(
     element

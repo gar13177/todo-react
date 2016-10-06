@@ -1,5 +1,6 @@
 import { todos } from './todos';
 import { visibilityFilter } from './visibility';
+import undoable, { distinctState } from 'redux-undo';
 
 const element = (state = {}, action) => {
   switch(action.type) {
@@ -79,7 +80,7 @@ const element = (state = {}, action) => {
   }
 }
 
-const elements = (state = [], action) => {
+const elementsReducer = (state = [], action) => {
   switch (action.type){
     case 'ADD_TODO_LIST':
       return [
@@ -119,4 +120,8 @@ const elements = (state = [], action) => {
   }
 }
 
-export { elements };
+const elements = undoable(elementsReducer, {
+  filter: distinctState()
+})
+
+export { elements, elementsReducer };

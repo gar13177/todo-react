@@ -1,6 +1,8 @@
 import { createStore, combineReducers, applyMiddleware  } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { ActionCreators as UndoActionCreators } from 'redux-undo'
 //import {Router, browserHistory} from 'react-router';
 
 
@@ -91,7 +93,19 @@ const Header = ({element, onUpdateTitle}) => {
   );
 }
 
-const GeneralFooter = ({ currentVisibilityFilter, onFilterClicked }) => (
+
+let UndoRedo = ({ canUndo, canRedo, onUndo, onRedo }) => (
+  <div>
+    <button onClick={onUndo} disabled={!canUndo}>
+      Undo
+    </button>
+    <button onClick={onRedo} disabled={!canRedo}>
+      Redo
+    </button>
+  </div>
+);
+
+const GeneralFooter = ({ currentVisibilityFilter, onFilterClicked, canUndo, canRedo }) => (
   <div
     class="general-footer"
   >
@@ -115,6 +129,16 @@ const GeneralFooter = ({ currentVisibilityFilter, onFilterClicked }) => (
       visibilityFilter="SHOW_ARCHIVED"
       currentVisibilityFilter={ currentVisibilityFilter }
       onFilterClicked={ onFilterClicked }>Archivados</FilterLink>
+    <UndoRedo
+      canUndo={ canUndo }
+      canRedo={ canRedo }
+      onUndo={
+        () => store.dispatch(UndoActionCreators.undo())
+      }
+      onRedo={
+        () => store.dispatch(UndoActionCreators.redo())
+      }
+     />
   </div>
 );
 
@@ -408,11 +432,13 @@ const ElementsApp = ({ elements, visibilityFilterElements, configurations }) => 
         
 
         <ElementList
-        elements={ getVisibleElements(elements, visibilityFilterElements, configurations) }
+        elements={ getVisibleElements(elements.present, visibilityFilterElements, configurations) }
         colors={ configurations.colors }
         />
       </div>
       <GeneralFooter
+      canUndo={ elements.past.length > 0 }
+      canRedo={ elements.future.length > 0 }
       currentVisibilityFilter={ visibilityFilterElements }
       onFilterClicked={
         (filter) => {
@@ -636,16 +662,6 @@ const TodosApp = ({ todos, visibilityFilter, elementId }) => (
 -----------------
 -----------------
 */
-/*
-const render = () => {
-  ReactDOM.render(
-     <Router 
-        routes={routes}
-        history={browserHistory} />,
-    document.querySelector('.init')
-  );
-};*/
-
 
 
 
