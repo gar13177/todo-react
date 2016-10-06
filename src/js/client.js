@@ -1,21 +1,19 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware  } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 //import {Router, browserHistory} from 'react-router';
-import deepFreeze from 'deep-freeze';
-import expect from 'expect';
+
+
 import v4 from 'uuid-v4';
 import '../styles/index.scss';
-
+import { crashReporter, logger } from './middleware/middleware';
+import {} from './e2e/todos.spec';
 //import routes from './routes';
 
 import { todos } from './reducers/todos';
 import { elements } from './reducers/elements';
 import { visibilityFilterElements } from './reducers/visibility';
 import { configurations } from './reducers/configuration';
-//import ElementsApp from './components/elementsApp';
-
-//import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 const { Component } = React;
 
@@ -44,7 +42,30 @@ const saveState = (state) => {
   }
 }
 
-const store = createStore(todoApp, loadState());
+/* middleware 
+const logger = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+}
+
+const crashReporter = store => next => action => {
+  try {
+    return next(action)
+  } catch (err) {
+    console.error('Caught an exception!', err)
+    Raven.captureException(err, {
+      extra: {
+        action,
+        state: store.getState()
+      }
+    })
+    throw err
+  }
+}*/
+
+const store = createStore(todoApp, loadState(), applyMiddleware(logger, crashReporter));
 
 /*
 -------------------
@@ -89,6 +110,11 @@ const GeneralFooter = ({ currentVisibilityFilter, onFilterClicked }) => (
       visibilityFilter="SHOW_TODOS"
       currentVisibilityFilter={ currentVisibilityFilter }
       onFilterClicked={ onFilterClicked }>Todos</FilterLink>
+    {' '}
+    <FilterLink
+      visibilityFilter="SHOW_ARCHIVED"
+      currentVisibilityFilter={ currentVisibilityFilter }
+      onFilterClicked={ onFilterClicked }>Archivados</FilterLink>
   </div>
 );
 
@@ -172,10 +198,16 @@ const getVisibleElements = (elements, visibilityFilter, configurations) => {
 
   if(visibilityFilter === 'SHOW_TODOS')
     return elements.filter(t => !t.isNote).filter(t => !t.archived);
+
+  
+  if(visibilityFilter === 'SHOW_ARCHIVED')
+    return elements.filter(t => t.archived);
 }
 
 const ElementList = ({ elements, colors }) => (
-  <div>
+  <div
+    class='column-wrapper'
+  >
     {
       elements.map(element => (
         <Element
@@ -191,6 +223,11 @@ const ElementList = ({ elements, colors }) => (
 
 const Element = ({ element, colors}) => {
   let value;
+  let button_value;
+  if (element.archived)
+    button_value = 'Desarchivar';
+  else
+    button_value = 'Archivar';
   switch(element.isNote) {
     case true:
       value =
@@ -244,14 +281,14 @@ const Element = ({ element, colors}) => {
         onClick={ 
           () => {
             store.dispatch({
-              type: 'ARCHIVE_ELEMENT',
+              type: 'TOGGLE_ARCHIVE',
               payload: {
                 elementId: element.id
               }
             });
           } 
         }
-      >Archivar</button>
+      >{ button_value }</button>
       <div
         class="colors"
       >
@@ -318,7 +355,7 @@ const SearchElement = ({onSearchElement, configurations}) => {
             onSearchElement(input.value);
           }
         }
-      >X</button>
+      >&times;</button>
     </div>
 
   );
@@ -445,7 +482,7 @@ const Todo = ({ todo, onTodoClicked, onRemoveTodo, onUpdateTodo}) => {
       
       <button
           onClick={ onRemoveTodo }
-      >X</button>
+      >&times;</button>
     </div>
   );
 }
@@ -608,6 +645,9 @@ const render = () => {
     document.querySelector('.init')
   );
 };*/
+
+
+
 
 
 const render = () => {

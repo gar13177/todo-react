@@ -43,7 +43,7 @@ const Todo = ({ todo, onTodoClicked, onRemoveTodo, onUpdateTodo}) => {
       
       <button
           onClick={ onRemoveTodo }
-      >X</button>
+      >&times</button>
     </div>
   );
 }

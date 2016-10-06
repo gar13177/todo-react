@@ -58,7 +58,7 @@ $footer-height: 45px;
     border-radius: 50%;
     border: none;
     color: white;
-    font: bold 16px Roboto,sans-serif;
+    font: bold 17px Roboto,sans-serif;
     margin: 2px 10px 0 10px;
     opacity: 0.85;
   }
@@ -74,8 +74,8 @@ $footer-height: 45px;
     width: 100%;
     box-sizing: border-box;
     font-family: 'Roboto Slab','Times New Roman',serif;
-    font-size: 15px;
-    padding: 0 100px 0 10px;
+    font-size: 17px;
+    padding: 0 45px 0 10px;
   }
   button{
     width: 25px;
@@ -87,17 +87,10 @@ $footer-height: 45px;
     border-radius: 10%;
     border: none;
     color: white;
-    font: bold 25px Roboto,sans-serif;
-    padding: 0;
+    font: bold 20px Roboto,sans-serif;
+    padding: 1px 0 0 0;
     margin: 2px 10px 0 10px;
     opacity: 0.85;
-    /*
-    width: 100px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: transparent;*/
   }
 }
 
@@ -116,7 +109,7 @@ $footer-height: 45px;
     font-size: 17px;
     padding-right: 200px;
     padding-left: 5px;
-  }
+  } 
   .b1{
     width: 100px;
     height: 100%;
@@ -134,8 +127,10 @@ $footer-height: 45px;
 }
 
 .note{
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
+  padding: 0 10px 0 10px;
 }
 
 .search-bar{
@@ -160,7 +155,7 @@ $footer-height: 45px;
     border-radius: 50%;
     border: none;
     color: white;
-    font: bold 16px Roboto,sans-serif;
+    font: bold 20px Roboto,sans-serif;
     height: 35px;
     margin: 5px 10px 0 10px;
     opacity: 0.5;
@@ -202,9 +197,11 @@ $footer-height: 45px;
     position: absolute;;
     bottom: 0;
     right: 0;
+    width: 90px;
   }  
   .colors{
-    height: 30px;
+    height: 35px;
+    
     .color{
       border-radius: 50%;
       border-style: solid;
@@ -214,6 +211,8 @@ $footer-height: 45px;
       height: 20px;
       width: 20px;
     }
+    overflow-x: auto;
+    margin-right: 90px;
   }
 
 }
@@ -230,4 +229,30 @@ body{
 
 ::-webkit-input-placeholder {
    color: grey;
+}
+
+@media only screen and (min-width: 480px) {
+  .add-element{
+    margin: 0 auto;
+    width: 450px;
+  }
+  .column-wrapper{
+    column-count: 2;
+    column-gap: 10px;
+  }
+  .column-wrapper > div {
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside:avoid;
+    break-inside: avoid-column;
+    -webkit-column-break-inside: avoid;
+    display: inline-block;
+    overflow: hidden; 
+  }
+
+}
+
+@media only screen and (min-width: 768px){
+  .column-wrapper{
+    column-count: 3;
+  }
 }

@@ -1,4 +1,6 @@
-import todos from '../reducers/todos';
+import { todos } from '../reducers/todos';
+import deepFreeze from 'deep-freeze';
+import expect from 'expect';
 
 const testAddTodo = () => {
   const stateBefore = [];
@@ -59,6 +61,55 @@ const testToggleTodo = () => {
     }
   ];
 
+
+
+
+  deepFreeze(stateBefore);
+  deepFreeze(action);
+
+  expect(
+    todos(stateBefore, action)
+  ).toEqual(stateAfter);
+}
+
+const testUpdateTodo = () => {
+  const stateBefore = [
+    {
+      id: 0,
+      text: 'Limpiar mi casa',
+      completed: false
+    },
+    {
+      id: 1,
+      text: 'Banarme',
+      completed: false
+    }
+  ];
+
+  const action = {
+    type: 'UPDATE_TODO',
+    payload: {
+      id: 1,
+      text:'nuevo'
+    }
+  }
+
+  const stateAfter = [
+    {
+      id: 0,
+      text: 'Limpiar mi casa',
+      completed: false
+    },
+    {
+      id: 1,
+      text: 'nuevo',
+      completed: false
+    }
+  ];
+
+
+
+
   deepFreeze(stateBefore);
   deepFreeze(action);
 
@@ -69,4 +120,10 @@ const testToggleTodo = () => {
 
 testAddTodo();
 testToggleTodo();
+testUpdateTodo();
+
 console.log("All todo tests passed!");
+
+import {} from './visibility.spec';
+
+export {}

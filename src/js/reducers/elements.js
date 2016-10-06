@@ -21,6 +21,7 @@ const element = (state = {}, action) => {
       };
     case 'ADD_TODO':
       if(state.id === action.payload.elementId){
+        console.log(state);
         state.todolist= todos(state.todolist, action);
         state.update_date = new Date().toLocaleString();
         return { ...state };
@@ -55,9 +56,9 @@ const element = (state = {}, action) => {
         state.update_date = new Date().toLocaleString();
         return { ...state };
       }
-    case 'ARCHIVE_ELEMENT':
+    case 'TOGGLE_ARCHIVE':
       if(state.id === action.payload.elementId){
-        state.archived = true;
+        state.archived = !state.archived;
         state.update_date = new Date().toLocaleString();
         return { ...state };
       }
@@ -107,7 +108,7 @@ const elements = (state = [], action) => {
       return state.map(e => element(e, action));
     case 'UPDATE_NOTE':
       return state.map(e => element(e, action));
-    case 'ARCHIVE_ELEMENT':
+    case 'TOGGLE_ARCHIVE':
       return state.map(e => element(e, action));    
     case 'REMOVE_TODO':
       return state.map(e => element(e, action));
